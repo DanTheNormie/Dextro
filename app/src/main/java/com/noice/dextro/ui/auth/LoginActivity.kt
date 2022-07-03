@@ -1,4 +1,4 @@
-package com.noice.dextro
+package com.noice.dextro.ui.auth
 
 
 import android.content.Intent
@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.identity.GetPhoneNumberHintIntentRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.noice.dextro.R
 import com.noice.dextro.databinding.ActivityLoginBinding
 
 
@@ -24,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.lifecycleOwner = this
 
         val vm = ViewModelProvider(this)[LoginViewModel::class.java]
@@ -40,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
         binding.phoneNumTiet.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus){
+            if (hasFocus && vm.getPhoneAuto){
                 val request: GetPhoneNumberHintIntentRequest = GetPhoneNumberHintIntentRequest.builder().build()
 
                 Identity.getSignInClient(this)
@@ -53,9 +54,10 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(this, "${it.message}" , Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
                         Log.e(TAG, "Phone Number Hint failed : Reason $it")
                     }
+                vm.getPhoneAuto = false
             }
         }
         binding.phoneNumTiet.addTextChangedListener {

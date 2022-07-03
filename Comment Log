@@ -1,0 +1,13 @@
+3/7/22 11:25 PM (init log)
+
+    Tasks done
+    - completed login and authentication
+
+    Bugs to be Cleared
+        - Bug(1)
+            Title :- PhoneAuthProvider.verifyPhoneNumber(...) Activity/Timeout bug
+            Desc :-
+                if you request for an otp in VerifyOTPActivity
+                and then go back to LoginActivity within 60s
+                and then to VerifyOTPActivity,
+                A new request will not be sent Cause of the Timeout
