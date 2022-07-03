@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1036160196027",
+    "project_id": "dextro-11",
+    "storage_bucket": "dextro-11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036160196027:android:f4fa2325bc9d103deab89e",
+        "android_client_info": {
+          "package_name": "com.noice.dextro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036160196027-eenip1c3nhv67888grvll2elnrrtqgsg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.noice.dextro",
+            "certificate_hash": "3fb4d42c983bc081952b4c53ff72397903471057"
+          }
+        },
+        {
+          "client_id": "1036160196027-fm5b5vuit8ijm801jthloa677517pjvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDXs6FiD_l-i44VD5ICdH9IfVgIAVHpLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036160196027-fm5b5vuit8ijm801jthloa677517pjvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
