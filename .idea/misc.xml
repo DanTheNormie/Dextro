@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/drawable/ic_baseline_arrow_right_24.xml" value="0.2205" />
+        <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.142" />
         <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/layout/activity_login.xml" value="0.22" />
         <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/layout/activity_main.xml" value="0.21302083333333333" />
+        <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/layout/activity_sign_up.xml" value="0.5" />
         <entry key="..\:/Users/iwont/AndroidStudioProjects/Dextro2/app/src/main/res/layout/activity_verify_otp.xml" value="0.22" />
       </map>
     </option>

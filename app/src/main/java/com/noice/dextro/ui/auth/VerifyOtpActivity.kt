@@ -23,6 +23,25 @@ import com.noice.dextro.databinding.ActivityVerifyOtpBinding
 import com.noice.dextro.utils.DialogHelper
 import java.util.concurrent.TimeUnit
 
+/*
+* What we are doing?
+* step 1:- Send request to server for OTP
+* step 2:- Sending the OTP to verify
+*
+* misc:-
+* (1) you can resend a request for otp once every 60 seconds
+* (2) every network request must
+*       while starting :
+*           (a) show a loading progress
+*           (b) notify user with a toast about what the network request is about
+*       Upon response :
+*           (a) stop the loading progress
+*           (b) notify user with a toast/dialog about what the response is
+*
+* */
+
+
+
 class VerifyOtpActivity : AppCompatActivity() {
     val TAG = "VerifyOTPActivity"
     lateinit var phoneNumber: String
@@ -39,25 +58,59 @@ class VerifyOtpActivity : AppCompatActivity() {
         bind.lifecycleOwner = this
 
         initViews()
-        startVerification(false)
+        initOnClickListeners()
+        sendRequestForOTP(true)
 
     }
 
-    private fun startVerification(resend:Boolean){
-        if (resend){
-            PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.setForceResendingToken(mResendToken).build())
-        }else{
-            PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.build())
+    private fun initOnClickListeners() {
+        bind.verifyOtpBtn.setOnClickListener {
+            val code = bind.otpTiet.text.toString()
+
+            if(code.length==6 && mVerificationId.isNotBlank()){
+                val credential = PhoneAuthProvider.getCredential(mVerificationId,code)
+                signInWithPhoneAuthCredential(credential)
+
+                bind.refreshLayout.isRefreshing = true
+                Toast.makeText(
+                    this,
+                    "Please wait while we verify your OTP code.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }else{
+                DialogHelper.createSimpleDialog(this,"Please input proper OTP code")
+            }
         }
-        showTimer(60000)
-        bind.refreshLayout.isRefreshing = true
+
+        bind.resendOtpBtn.setOnClickListener {
+            sendRequestForOTP(true)
+            Toast.makeText(this, "Sendind OTP to $phoneNumber", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun sendRequestForOTP(isFirstTime:Boolean){
+        if (isFirstTime){
+            PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.build())
+        }else{
+            // using a hack here, to be removed after adding network detection
+            if(this::mResendToken.isInitialized){
+                PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.setForceResendingToken(mResendToken).build())
+            }else{
+                PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.build())
+            }
+        }
+        notifyUser()
+
     }
 
     private fun initViews() {
         phoneNumber = intent.getStringExtra("phone_no").toString()
-        bind.verifyNoTitleTv.text = getString(R.string.verify_custom_number,phoneNumber)
-        setHelperTxtSpannableString()
 
+        bind.verifyNoTitleTv.text = getString(R.string.verify_custom_number,phoneNumber)
+
+        initHelperTxtSpannableString()
+
+        //<editor-fold desc="Init PhoneAuthOptions var for sending a request for OTP">
         //should always be above PhoneAuthOptions variable
         verficationCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -68,12 +121,11 @@ class VerifyOtpActivity : AppCompatActivity() {
                 // 2 - Auto-retrieval. On some devices Google Play services can automatically
                 //     detect the incoming verification SMS and perform verification without
                 //     user action.
-                bind.refreshLayout.isRefreshing = false
-                Log.d(TAG, "onVerificationCompleted:$credential")
-                val smsCode = credential.smsCode
-                if(!smsCode.isNullOrBlank()){
-                    bind.otpTiet.setText(smsCode)
-                }
+
+
+                Toast.makeText(this@VerifyOtpActivity, "OTP Auto-Detected.", Toast.LENGTH_SHORT).show()
+                bind.otpTiet.setText(credential.smsCode)
+
                 signInWithPhoneAuthCredential(credential)
             }
 
@@ -116,42 +168,25 @@ class VerifyOtpActivity : AppCompatActivity() {
             }
         }
 
+        //used for sending OTP request
         phoneAtuhOptions = PhoneAuthOptions.newBuilder(Firebase.auth)
             .setPhoneNumber(phoneNumber)                // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS)   // Timeout and unit
             .setActivity(this)                          // Activity (for callback binding)
             .setCallbacks(verficationCallbacks)         //setting callbacks to handle verification state
-
-
-        bind.verifyOtpBtn.setOnClickListener {
-
-            val code = bind.otpTiet.text.toString()
-            if(code.length==6 && code.isNotEmpty() && mVerificationId.isNotBlank()){
-                Toast.makeText(
-                    this,
-                    "Please wait while we process your request.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                bind.refreshLayout.isRefreshing = true
-                val credential = PhoneAuthProvider.getCredential(mVerificationId,code)
-                signInWithPhoneAuthCredential(credential)
-            }else{
-                DialogHelper.createSimpleDialog(this,"Please input proper OTP code")
-            }
-        }
-
-        bind.resendOtpBtn.setOnClickListener {
-            startVerification(true)
-            Toast.makeText(this, "Sendind OTP to $phoneNumber", Toast.LENGTH_SHORT).show()
-        }
+        //</editor-fold>
     }
 
+
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        //For Signing In user with OTP
+
         val auth = FirebaseAuth.getInstance()
         auth.signInWithCredential(credential)
             .addOnCompleteListener {
                 if(it.isSuccessful){
-                    Toast.makeText(this, "Successful biro arigato guzaimas", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this,SignUpActivity::class.java))
+                    Toast.makeText(this, "Successful biro , You made it !!!", Toast.LENGTH_SHORT).show()
                 }else{
                     DialogHelper.createSimpleDialog(this,"your phone number verification failed. Please try again !!")
                 }
@@ -159,10 +194,20 @@ class VerifyOtpActivity : AppCompatActivity() {
             }
     }
 
-    private fun showTimer(ms: Long) {
+    private fun notifyUser() {
+
+        /*
+        * (1) Show a loading progress
+        * (2) Disable ResendOTPBtn and enable after 60 seconds
+        * (3) Disable VerifyOTPBtn until otp is sent to mobile number (btn will be enabled when OnCodeSent() is called in callback)
+        * (4) Start 60s CountDown Timer
+        * (5) show a toast to notify user that a request for otp has been sent
+        * */
+
+        bind.refreshLayout.isRefreshing = true
         bind.resendOtpBtn.isEnabled = false
         bind.verifyOtpBtn.isEnabled = false
-        mcountDownTimer = object:CountDownTimer(ms,1000){
+        mcountDownTimer = object:CountDownTimer(60000,1000){
             override fun onTick(millisUntilFinished: Long) {
                 bind.helperTxt2Tv.visibility = View.VISIBLE
                 bind.helperTxt2Tv.text = getString(R.string.resend_otp,millisUntilFinished/1000)
@@ -176,9 +221,8 @@ class VerifyOtpActivity : AppCompatActivity() {
         Toast.makeText(this, "Sending a request for OTP to server", Toast.LENGTH_SHORT).show()
     }
 
-    private fun setHelperTxtSpannableString() {
+    private fun initHelperTxtSpannableString() {
         val span = SpannableString(getString(R.string.waiting_info_txt,phoneNumber))
-
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
                 showLoginActivity()
@@ -190,13 +234,14 @@ class VerifyOtpActivity : AppCompatActivity() {
             }
         }
         span.setSpan(clickableSpan,span.length - 13,span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
         bind.helperTxtTv.text = span
         bind.helperTxtTv.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun showLoginActivity() {
         startActivity(Intent(this, LoginActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 

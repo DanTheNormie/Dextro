@@ -42,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.phoneNumTiet.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus && vm.getPhoneAuto){
+                vm.getPhoneAuto = false
                 val request: GetPhoneNumberHintIntentRequest = GetPhoneNumberHintIntentRequest.builder().build()
 
                 Identity.getSignInClient(this)
@@ -57,7 +58,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
                         Log.e(TAG, "Phone Number Hint failed : Reason $it")
                     }
-                vm.getPhoneAuto = false
+
             }
         }
         binding.phoneNumTiet.addTextChangedListener {

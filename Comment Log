@@ -11,3 +11,22 @@
                 and then go back to LoginActivity within 60s
                 and then to VerifyOTPActivity,
                 A new request will not be sent Cause of the Timeout
+        - Bug(2)
+            Title :- OTP editText hint animation
+            Desc :-
+                the OTP_et hint goes above and shortens...
+                remove the hint after onFocus
+
+4/7/22 5:15 PM (first log of the day)
+
+    Tasks done
+    - resolved bug(2)
+    - cleaned up some code / added comments for readability
+
+    Bugs to be Cleared / Features to be added
+        - Bug(1)
+            comments:- can be resolved if we implement a shared viewmodel and hold the 60s timeout state in the viewmodel
+
+        - Feature(1)
+            Title :- internet connectivity status indicator
+            Desc :- add a indicator to check for internet connectivity status indicator and then make network calls
