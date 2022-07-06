@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/user_iv"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:shapeAppearanceOverlay="@style/CircularImageView"
+            android:src="@drawable/ic_baseline_person_24"
+            app:layout_constraintStart_toStartOf="@id/guideline_start"
+            app:layout_constraintTop_toTopOf="@id/guideline_top"/>
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:text="User Name"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/time_tv"
+            app:layout_constraintStart_toEndOf="@id/user_iv"
+            app:layout_constraintTop_toTopOf="@id/user_iv" />
+
+        <TextView
+            android:id="@+id/time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:textSize="16sp"
+            android:text="12/8/22"
+            app:layout_constraintEnd_toStartOf="@id/guideline_end"
+            app:layout_constraintTop_toBottomOf="@id/guideline_top"/>
+
+        <TextView
+            android:id="@+id/sub_title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:layout_marginBottom="8dp"
+            android:layout_marginHorizontal="8dp"
+            android:textSize="16dp"
+            android:text="this is a recent msg"
+
+            app:layout_constraintStart_toEndOf="@id/user_iv"
+            app:layout_constraintBottom_toBottomOf="@id/user_iv"/>
+
+        <TextView
+            android:id="@+id/count_tv"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:text="1"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:background="@drawable/count_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@id/guideline_end"
+            app:layout_constraintTop_toTopOf="@id/sub_title_tv"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

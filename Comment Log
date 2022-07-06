@@ -30,3 +30,13 @@
         - Feature(1)
             Title :- internet connectivity status indicator
             Desc :- add a indicator to check for internet connectivity status indicator and then make network calls
+
+6/7/22 5:03 AM (forgot to update log)
+
+    Tasks Done
+    - implemented a paged users list that show all other registered users
+    - added feature to skip signup if existing user
+
+    Bugs/Feature pending
+    - Bug(1) (priority low)
+    - Feature(1) (priority low)

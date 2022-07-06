@@ -3,4 +3,6 @@
     <string name="verify_custom_number">Verify %s</string>
     <string name="waiting_info_txt">Waiting to automatically detect an SMS sent to %n %s Wrong Number?</string>
     <string name="resend_otp">You can send another otp in %d seconds</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

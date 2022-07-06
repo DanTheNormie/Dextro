@@ -17,10 +17,13 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.noice.dextro.R
 import com.noice.dextro.databinding.ActivityVerifyOtpBinding
+import com.noice.dextro.ui.main.MainActivity
 import com.noice.dextro.utils.DialogHelper
+import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 
 /*
@@ -71,7 +74,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                 val credential = PhoneAuthProvider.getCredential(mVerificationId,code)
                 signInWithPhoneAuthCredential(credential)
 
-                bind.refreshLayout.isRefreshing = true
+                bind.refreshLayout.visibility = View.VISIBLE
                 Toast.makeText(
                     this,
                     "Please wait while we verify your OTP code.",
@@ -133,7 +136,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                 // This callback is invoked in an invalid request for verification is made,
                 // for instance if the the phone number format is not valid.
                 Log.w(TAG, "onVerificationFailed", e)
-                bind.refreshLayout.isRefreshing = false
+                bind.refreshLayout.visibility = View.GONE
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     Toast.makeText(this@VerifyOtpActivity, "Invalid Request. please try again later", Toast.LENGTH_SHORT).show()
@@ -142,7 +145,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                 }
 
                 // Show a message and update the UI
-                DialogHelper.createSimpleDialog(applicationContext,"Phone Number Verification failed. Please try again")
+                DialogHelper.createSimpleDialog(this@VerifyOtpActivity,"Phone Number Verification failed. Please try again")
             }
 
             override fun onCodeSent(
@@ -157,7 +160,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                 // Save verification ID and resending token so we can use them later
                 mVerificationId = verificationId
                 mResendToken = token
-                bind.refreshLayout.isRefreshing = false
+                bind.refreshLayout.visibility = View.GONE
                 bind.verifyOtpBtn.isEnabled = true
 
                 Toast.makeText(
@@ -184,13 +187,28 @@ class VerifyOtpActivity : AppCompatActivity() {
         val auth = FirebaseAuth.getInstance()
         auth.signInWithCredential(credential)
             .addOnCompleteListener {
-                if(it.isSuccessful){
-                    startActivity(Intent(this,SignUpActivity::class.java))
-                    Toast.makeText(this, "Successful biro , You made it !!!", Toast.LENGTH_SHORT).show()
-                }else{
-                    DialogHelper.createSimpleDialog(this,"your phone number verification failed. Please try again !!")
+                if (it.isSuccessful) {
+
+                    val creationTimeStamp = it.result.user?.metadata?.creationTimestamp
+                    val lastSignInTimeStamp = it.result.user?.metadata?.lastSignInTimestamp
+
+                    if (creationTimeStamp == lastSignInTimeStamp) {
+                        startActivity(Intent(this, SignUpActivity::class.java))
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Welcome back !!!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        startActivity(Intent(this, MainActivity::class.java))
+                    }
+                } else {
+                    DialogHelper.createSimpleDialog(
+                        this,
+                        "your phone number verification failed. Please try again !!"
+                    )
                 }
-                bind.refreshLayout.isRefreshing = false
+                bind.refreshLayout.visibility = View.GONE
             }
     }
 
@@ -204,7 +222,7 @@ class VerifyOtpActivity : AppCompatActivity() {
         * (5) show a toast to notify user that a request for otp has been sent
         * */
 
-        bind.refreshLayout.isRefreshing = true
+        bind.refreshLayout.visibility = View.VISIBLE
         bind.resendOtpBtn.isEnabled = false
         bind.verifyOtpBtn.isEnabled = false
         mcountDownTimer = object:CountDownTimer(60000,1000){
