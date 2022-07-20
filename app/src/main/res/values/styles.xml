@@ -14,7 +14,7 @@
         <item name="android:windowActionBar">false</item>
     </style>
 
-    <style name="outgoing_msg_item_shape">
+    <style name="outgoing_msg_cardview_shape">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeBottomLeft">22dp</item>
         <item name="cornerSizeBottomRight">22dp</item>
@@ -22,7 +22,7 @@
         <item name="cornerSizeTopRight">0dp</item>
     </style>
 
-    <style name="incoming_msg_item_shape">
+    <style name="incoming_msg_cardview_shape">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeBottomLeft">22dp</item>
         <item name="cornerSizeBottomRight">22dp</item>
@@ -30,7 +30,32 @@
         <item name="cornerSizeTopRight">22dp</item>
     </style>
     
-    <style name="incoming_msg_theme">
+    <style name="incoming_msg_cardview" >
+        <item name="shapeAppearance">@style/outgoing_msg_cardview_shape</item>
+        <item name="cardBackgroundColor">@color/purple_200</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+    </style>
 
+    <style name="outgoing_msg_cardview" >
+        <item name="cardBackgroundColor">@color/teal_700</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="shapeAppearance">@style/incoming_msg_cardview_shape</item>
+    </style>
+
+    <style name="incoming_msg_layout">
+        <item name="android:layout_marginEnd">30dp</item>
+    </style>
+
+    <style name="outgoing_msg_layout">
+        <item name="android:layout_marginEnd">30dp</item>
+    </style>
+
+    <style name="incoming_msg_theme" parent="Theme.Dextro">
+        <item name="msg_layout">@style/incoming_msg_layout</item>
+        <item name="msg_card_style">@style/incoming_msg_cardview</item>
+    </style>
+    <style name="outgoing_msg_theme" parent="Theme.Dextro">
+        <item name="msg_layout">@style/outgoing_msg_layout</item>
+        <item name="cardViewStyle">@style/outgoing_msg_cardview</item>
     </style>
 </resources>
