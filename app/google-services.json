@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1036160196027",
+    "firebase_url": "https://dextro-11-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "dextro-11",
     "storage_bucket": "dextro-11.appspot.com"
   },
@@ -14,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "1036160196027-eenip1c3nhv67888grvll2elnrrtqgsg.apps.googleusercontent.com",
+          "client_id": "1036160196027-f5kc210a99ccdoa8rt4ha2m71njb7lhj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.noice.dextro",

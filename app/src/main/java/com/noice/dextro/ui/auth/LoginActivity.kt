@@ -21,12 +21,12 @@ import com.noice.dextro.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
     private val TAG = "LoginActivity"
-    lateinit var binding: ActivityLoginBinding
+    lateinit var bind: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        binding.lifecycleOwner = this
+        bind = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        bind.lifecycleOwner = this
 
         val vm = ViewModelProvider(this)[LoginViewModel::class.java]
 
@@ -34,13 +34,13 @@ class LoginActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
                 try {
                     val phoneNumber = Identity.getSignInClient(this).getPhoneNumberFromIntent(result.data)
-                    binding.phoneNumTiet.setText(phoneNumber)
+                    bind.phoneNumTiet.setText(phoneNumber)
                 } catch(e: Exception) {
                     Log.e(TAG, "Phone Number Hint failed")
                 }
             }
 
-        binding.phoneNumTiet.setOnFocusChangeListener { v, hasFocus ->
+        bind.phoneNumTiet.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus && vm.getPhoneAuto){
                 vm.getPhoneAuto = false
                 val request: GetPhoneNumberHintIntentRequest = GetPhoneNumberHintIntentRequest.builder().build()
@@ -58,27 +58,26 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
                         Log.e(TAG, "Phone Number Hint failed : Reason $it")
                     }
-
             }
         }
-        binding.phoneNumTiet.addTextChangedListener {
-            binding.verifyBtn.isEnabled = vm.verifyPhoneNumber(it.toString())
+        bind.phoneNumTiet.addTextChangedListener {
+            bind.verifyBtn.isEnabled = vm.verifyPhoneNumber(it.toString())
         }
-        binding.verifyBtn.setOnClickListener {
-            showEditOTPDialog()
+        bind.verifyBtn.setOnClickListener {
+            showShouldEditPhoneNUmberDialog()
         }
 
     }
 
-    private fun showEditOTPDialog(){
+    private fun showShouldEditPhoneNUmberDialog(){
         MaterialAlertDialogBuilder(this).apply {
             setTitle("Confirm Phone Number")
-            setMessage("We'll be sending an OTP to ${binding.phoneNumTiet.text}. \n"+
-                    "Would you like to edit your number ? ")
-            setPositiveButton("No"){_,_ ->
-                showVerifyOTPActivity()
+            setMessage("We'll be sending an OTP to ${bind.phoneNumTiet.text}. \n"+
+                    "Would you like to proceed ? ")
+            setPositiveButton("Yes"){_,_ ->
+                gotoVerifyOTPActivity()
             }
-            setNegativeButton("edit"){dialog,_ ->
+            setNegativeButton("No, I want to edit the number"){dialog,_ ->
                 dialog.dismiss()
             }
             setCancelable(false)
@@ -87,9 +86,9 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun showVerifyOTPActivity(){
-        val countryCode = binding.ccpSpinner.selectedCountryCodeWithPlus
-        val phoneNumber = countryCode + binding.phoneNumTiet.text
+    private fun gotoVerifyOTPActivity(){
+        val countryCode = bind.ccpSpinner.selectedCountryCodeWithPlus
+        val phoneNumber = countryCode + bind.phoneNumTiet.text
         val intent =  Intent(this, VerifyOtpActivity::class.java)
         intent.putExtra("phone_no",phoneNumber)
         startActivity(intent)
