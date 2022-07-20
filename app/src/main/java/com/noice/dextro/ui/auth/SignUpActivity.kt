@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.noice.dextro.R
-import com.noice.dextro.data.model.UserItem
+import com.noice.dextro.data.model.User
 import com.noice.dextro.databinding.ActivitySignUpBinding
 import com.noice.dextro.ui.main.MainActivity
 import java.io.IOException
@@ -74,7 +74,7 @@ class SignUpActivity : AppCompatActivity() {
         bind.nextBtn.setOnClickListener {
             loadingProgress(true)
             if(userDetailsAreSet()) {
-                val user = UserItem(
+                val user = User(
                     auth.uid.toString(),
                     bind.usernameTiet.text.toString(),
                     downloadUrl,

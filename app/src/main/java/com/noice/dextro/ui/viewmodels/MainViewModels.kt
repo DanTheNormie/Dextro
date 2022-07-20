@@ -8,9 +8,9 @@ import androidx.paging.cachedIn
 import com.google.firebase.firestore.FirebaseFirestore
 import com.noice.dextro.data.firebase.FirestorePagingSource
 
-class MainViewModel: ViewModel() {
+class MainViewModels: ViewModel() {
 
-    var flow = Pager(PagingConfig(pageSize = 20, enablePlaceholders = true)){
+    val flow = Pager(PagingConfig(20)){
         FirestorePagingSource(FirebaseFirestore.getInstance())
     }.flow.cachedIn(viewModelScope)
 }

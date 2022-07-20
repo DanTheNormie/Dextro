@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.noice.dextro">
+    package="com.noice.dextro" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,10 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Dextro">
-        <activity
-            android:name=".ui.main.ChatActivity"
-            android:exported="false" />
+        android:theme="@style/Theme.Dextro" >
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true"
@@ -28,13 +25,15 @@
         </activity>
         <activity
             android:name=".ui.auth.SignUpActivity"
-            android:exported="true" />
+            android:exported="true" >
+        </activity>
         <activity
             android:name=".ui.auth.VerifyOtpActivity"
             android:exported="false" />
         <activity
             android:name=".ui.auth.LoginActivity"
-            android:exported="true"></activity>
+            android:exported="true" >
+        </activity>
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true" />
