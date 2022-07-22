@@ -23,6 +23,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.noice.dextro.R
 import com.noice.dextro.databinding.ActivityLoginBinding
+import com.noice.dextro.ui.main.MainActivity
+import java.lang.StringBuilder
 
 
 class LoginActivity : AppCompatActivity() {
@@ -123,4 +125,34 @@ class LoginActivity : AppCompatActivity() {
         intent.putExtra("phone_no",phoneNumber)
         startActivity(intent)
     }
-}
+
+    private fun String.getLast10Digits():String{
+        val stringBuilder = StringBuilder(10)
+        for ( i in length-1..0){
+            if(this[i].isDigit() && stringBuilder.length <10){
+                stringBuilder.append(this[i])
+            }
+        }
+        return stringBuilder.reverse().toString()
+    }
+
+    private fun isUserprofileSet(){
+        val ref = FirebaseStorage.getInstance().reference.child("uploads/" + Firebase.auth.uid.toString())
+        ref.downloadUrl.addOnCompleteListener {
+            Log.i(TAG, "isUserprofileSet: true")
+            if(it.isSuccessful){
+                isLoading = false
+                isUserProfileSet = true
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+
+            }else{
+                Log.i(TAG, "isUserprofileSet: false")
+                isLoading = false
+                isUserProfileSet = false
+                startActivity(Intent(this, SignUpActivity::class.java))
+                finish()
+                }
+            }
+        }
+    }
