@@ -11,7 +11,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:context=".ui.auth.SignUpActivity">
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="64dp"
-                android:text="Profile Info"
+                android:text="@string/profile_info"
                 android:textColor="@color/purple_500"
                 android:textSize="32sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
 
-                android:text="Please provide your profile pic and a username"
+                android:text="@string/please_provide_your_profile_pic_and_a_username"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/signup_title_tv" />
@@ -84,11 +84,10 @@
                     android:layout_height="80dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:hint="Please enter your UserName"
+                    android:hint="@string/please_enter_your_username"
                     android:inputType="textPersonName"
                     android:maxLength="20"
-                    android:paddingBottom="0dp"
-                    android:text="lol" />
+                    android:paddingBottom="0dp"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
@@ -98,10 +97,22 @@
                 android:layout_marginTop="16dp"
                 android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
                 android:drawableTint="@color/white"
-                android:text="next"
+                android:text="@string/next_txt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/username_til" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/upload_img_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/user_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/user_iv"
+                app:layout_constraintTop_toBottomOf="@+id/helper_txt_tv"
+                app:iconGravity="top"
+                app:icon="@drawable/ic_round_upload_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

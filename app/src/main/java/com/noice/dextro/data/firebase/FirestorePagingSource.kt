@@ -1,20 +1,21 @@
 package com.noice.dextro.data.firebase
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.noice.dextro.data.model.User
+import com.noice.dextro.data.model.UserItem
 import kotlinx.coroutines.tasks.await
 
 class FirestorePagingSource(
     private val db:FirebaseFirestore
-) : PagingSource<QuerySnapshot,User>(){
-    override fun getRefreshKey(state: PagingState<QuerySnapshot, User>): QuerySnapshot? {
+) : PagingSource<QuerySnapshot,UserItem>(){
+    override fun getRefreshKey(state: PagingState<QuerySnapshot, UserItem>): QuerySnapshot? {
         TODO("Not yet implemented")
     }
 
-    override suspend fun load(params: LoadParams<QuerySnapshot>): LoadResult<QuerySnapshot, User> {
+    override suspend fun load(params: LoadParams<QuerySnapshot>): LoadResult<QuerySnapshot, UserItem> {
         return try {
             val currentPage = params.key ?: db.collection("users")
                 .limit(10)
@@ -30,11 +31,12 @@ class FirestorePagingSource(
                 .await()
 
             LoadResult.Page(
-                data = currentPage.toObjects(User::class.java),
+                data = currentPage.toObjects(UserItem::class.java),
                 prevKey = null,
                 nextKey = nextPage
             )
         } catch (e: Exception) {
+            Log.i("firebase paging", "load: ${e.localizedMessage}")
             LoadResult.Error(e)
         }
 

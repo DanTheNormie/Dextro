@@ -3,6 +3,7 @@ package com.noice.dextro.ui.auth
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,11 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.tasks.Continuation
+
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.noice.dextro.R
-import com.noice.dextro.data.model.User
+import com.noice.dextro.data.model.UserItem
 import com.noice.dextro.databinding.ActivitySignUpBinding
 import com.noice.dextro.ui.main.MainActivity
 import java.io.IOException
@@ -39,6 +42,7 @@ class SignUpActivity : AppCompatActivity() {
     }
     lateinit var  downloadUrl:String
     val tag = "SignUpActivity"
+    lateinit var selectedImageUri: Uri
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = DataBindingUtil.setContentView(this,R.layout.activity_sign_up)
@@ -48,7 +52,7 @@ class SignUpActivity : AppCompatActivity() {
                 val data = result.data
                 // do your operation from here ....
                 if (data != null && data.data != null) {
-                    val selectedImageUri: Uri? = data.data
+                    selectedImageUri = data.data!!
                     var selectedImageBitmap: Bitmap? = null
                     try {
                         selectedImageBitmap = MediaStore.Images.Media.getBitmap(
@@ -63,7 +67,7 @@ class SignUpActivity : AppCompatActivity() {
                             selectedImageBitmap
                         )
                     }
-                    uploadImage(selectedImageUri!!)
+                    uploadImage(selectedImageUri)
                 }
             }
         }
@@ -72,38 +76,47 @@ class SignUpActivity : AppCompatActivity() {
             checkPermsAndPickImgFromGallery()
         }
         bind.nextBtn.setOnClickListener {
-            loadingProgress(true)
             if(userDetailsAreSet()) {
-                val user = User(
+                val user = UserItem(
                     auth.uid.toString(),
                     bind.usernameTiet.text.toString(),
                     downloadUrl,
                     downloadUrl
                 )
                 firestoreDb.collection("users").document(auth.uid!!).set(user).addOnSuccessListener {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    val profile = UserProfileChangeRequest.Builder().apply {
+                        displayName = bind.usernameTiet.text.toString()
+                    }.build()
+                    FirebaseAuth.getInstance().currentUser?.updateProfile(profile)
+                    startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
                     finish()
                     loadingProgress(false)
                 }.addOnFailureListener {
                     loadingProgress(false)
                     Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
+            }else{
+                bind.helperTxtTv.setTextColor(Color.RED)
             }
+        }
+
+        bind.uploadImgBtn.setOnClickListener {
+            uploadImage(selectedImageUri)
         }
     }
 
     private fun userDetailsAreSet(): Boolean {
         var isUserDetailsSet = false
         var msg = ""
-        if(bind.usernameTiet.text?.length!! <= 6){
+        if(bind.usernameTiet.text?.length!! <= 2){
             isUserDetailsSet = false
-            msg += "UserName must be greater than 6 characters \n"
+            msg += "UserName must be greater than 2 characters \n"
         }
         if(!this::downloadUrl.isInitialized){
             isUserDetailsSet = false
-            msg += "please select a user profile picture \n"
+            msg += "please select and upload a user profile picture \n"
         }
-        if (this::downloadUrl.isInitialized && bind.usernameTiet.text?.length!! > 6){
+        if (this::downloadUrl.isInitialized && bind.usernameTiet.text?.length!! > 2){
             isUserDetailsSet = true
             msg = "You are all set, Let's get you in !!!"
         }
@@ -139,6 +152,7 @@ class SignUpActivity : AppCompatActivity() {
         val ref = storage.reference.child("uploads/" + auth.uid.toString())
         val uploadTask = ref.putFile(it)
         loadingProgress(true)
+        Toast.makeText(this, " please wait while we upload your profile picture", Toast.LENGTH_LONG).show()
         uploadTask.continueWithTask(Continuation { task ->
             if(!task.isSuccessful){
                 task.exception?.let {
@@ -149,11 +163,20 @@ class SignUpActivity : AppCompatActivity() {
             return@Continuation ref.downloadUrl
         }).addOnCompleteListener { task ->
             if(task.isSuccessful){
+                Toast.makeText(this, "Image has been uploaded successfully", Toast.LENGTH_SHORT).show()
                 downloadUrl = task.result.toString()
+
+                bind.uploadImgBtn.visibility = View.GONE
             }else{
                 Toast.makeText(this, "Failed to upload image, please try again !!!", Toast.LENGTH_SHORT).show()
+                bind.uploadImgBtn.visibility = View.VISIBLE
+                loadingProgress(false)
             }
             loadingProgress(false)
+        }.addOnFailureListener {
+            loadingProgress(false)
+            bind.uploadImgBtn.visibility = View.VISIBLE
+            Log.i("firebase", "uploadImage: ${it.localizedMessage}")
         }
     }
 

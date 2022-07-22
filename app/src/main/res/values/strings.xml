@@ -5,4 +5,33 @@
     <string name="resend_otp">You can send another otp in %d seconds</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_chat">ChatActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="today">Today</string>
+    <string name="logout">logout</string>
+    <string name="profile_info">Profile Info</string>
+    <string name="please_provide_your_profile_pic_and_a_username">Please provide your profile pic and a username</string>
+    <string name="please_enter_your_username">Please enter your UserName</string>
+    <string name="next_txt">next</string>
+    <string name="welcome_to_dextro">Welcome to Dextro</string>
+    <string name="verify_your_number">Verify your number</string>
+    <string name="please_enter_your_mobile_number">Please Enter Your Mobile Number.</string>
+    <string name="you_ll_receive_an_one_time_password">You\'ll receive an one-time-password.</string>
+    <string name="verify">Verify</string>
+    <string name="type_your_message">Type your message</string>
 </resources>
