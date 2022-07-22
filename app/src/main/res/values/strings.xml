@@ -34,4 +34,8 @@
     <string name="you_ll_receive_an_one_time_password">You\'ll receive an one-time-password.</string>
     <string name="verify">Verify</string>
     <string name="type_your_message">Type your message</string>
+    <string name="user_name">User Name</string>
+    <string name="date">12/8/22</string>
+    <string name="this_is_a_recent_msg">this is a recent msg</string>
+    <string name="_1">1</string>
 </resources>
