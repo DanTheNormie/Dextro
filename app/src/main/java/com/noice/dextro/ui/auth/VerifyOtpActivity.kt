@@ -11,6 +11,7 @@ import android.os.CountDownTimer
 import android.text.*
 import android.text.style.ClickableSpan
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.firebase.FirebaseException
@@ -261,7 +262,9 @@ class VerifyOtpActivity : AppCompatActivity() {
             override fun updateDrawState(ds: TextPaint) {
                 super.updateDrawState(ds)
                 ds.isUnderlineText = false
-                ds.color = ds.linkColor
+                val value = TypedValue()
+                this@VerifyOtpActivity.theme.resolveAttribute(androidx.appcompat.R.attr.colorPrimary,value,true)
+                ds.color = value.data
             }
         }
         span.setSpan(clickableSpan,span.length - 13,span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

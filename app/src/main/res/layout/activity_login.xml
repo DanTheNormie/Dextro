@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/welcome_tv"
-            android:textColor="@color/purple_700"
+            android:textColor="?attr/colorSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -66,8 +66,9 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:paddingTop="16dp"
+            app:ccp_contentColor="@color/material_on_background_emphasis_high_type"
+            app:ccpDialog_textColor="@color/material_on_background_emphasis_high_type"
             app:ccp_autoDetectCountry="true"
-            app:ccp_contentColor="@color/black"
             app:ccp_countryPreference="in"
             app:ccp_rippleEnable="true"
             app:ccp_showNameCode="false"
@@ -87,7 +88,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:minEms="7"
-            app:boxBackgroundColor="@color/white"
+            app:boxBackgroundColor="#00FFFFFF"
             app:boxStrokeWidth="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

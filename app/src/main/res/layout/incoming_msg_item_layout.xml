@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:shapeAppearance="@style/incoming_msg_shape"
-        app:cardBackgroundColor="@color/teal_700"
+        app:cardBackgroundColor="@color/incoming_msg_card_color"
         app:flow_wrapMode="chain2"
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,8 +36,7 @@
                 android:lineSpacingExtra="5dp"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                tools:text="Helloasdasdadaasdasdaasdasdasdasdasdasdasdasdasdasd"
-                />
+                tools:text="Helloasdasdadaasdasdaasdasdasdasdasdasdasdasdasdasd" />
 
             <TextView
                 android:id="@+id/time"

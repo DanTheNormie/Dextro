@@ -38,4 +38,5 @@
     <string name="date">12/8/22</string>
     <string name="this_is_a_recent_msg">this is a recent msg</string>
     <string name="_1">1</string>
+    <string name="dotted_lines">------</string>
 </resources>
