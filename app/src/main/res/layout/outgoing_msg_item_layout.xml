@@ -29,7 +29,7 @@
             app:flexWrap="wrap"
             app:justifyContent="flex_end">
 
-            <TextView
+            <com.vanniktech.emoji.EmojiTextView
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

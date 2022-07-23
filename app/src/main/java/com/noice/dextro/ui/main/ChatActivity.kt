@@ -67,7 +67,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EmojiManager.install(GoogleEmojiProvider())
+
         setContentView(bind.root)
 
         initViewsAndValues()

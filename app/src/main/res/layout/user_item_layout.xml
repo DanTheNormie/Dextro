@@ -50,7 +50,7 @@
             app:layout_constraintEnd_toStartOf="@id/guideline_end"
             app:layout_constraintTop_toTopOf="@+id/guideline_top" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/sub_title_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -65,7 +65,23 @@
             app:layout_constraintBottom_toBottomOf="@+id/user_iv"
             app:layout_constraintEnd_toStartOf="@+id/time_tv"
             app:layout_constraintStart_toEndOf="@id/user_iv"
-            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/title_tv" />-->
+        <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/sub_title_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxWidth="20dp"
+            android:text="@string/this_is_a_recent_msg"
+            android:textSize="16sp"
+
+            app:layout_constraintBottom_toBottomOf="@+id/user_iv"
+            app:layout_constraintEnd_toStartOf="@+id/time_tv"
+            app:layout_constraintStart_toEndOf="@id/user_iv"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"/>
 
         <TextView
             android:id="@+id/count_tv"

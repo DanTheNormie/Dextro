@@ -5,6 +5,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.database.FirebaseDatabase
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.google.GoogleEmojiProvider
 
 class MainApplication:Application() {
     override fun onCreate() {
@@ -15,6 +17,7 @@ class MainApplication:Application() {
         firebaseAppCheck.installAppCheckProviderFactory(
             SafetyNetAppCheckProviderFactory.getInstance()
         )
+        EmojiManager.install(GoogleEmojiProvider())
 
 
     }

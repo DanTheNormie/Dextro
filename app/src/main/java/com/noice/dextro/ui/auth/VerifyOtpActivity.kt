@@ -102,6 +102,9 @@ class VerifyOtpActivity : AppCompatActivity() {
     }
 
     private fun sendRequestForOTP(isFirstTime:Boolean){
+
+
+
         if (isFirstTime){
             PhoneAuthProvider.verifyPhoneNumber(phoneAtuhOptions.build())
         }else{
