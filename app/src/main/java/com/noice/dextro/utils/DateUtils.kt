@@ -56,9 +56,14 @@ val Date.calendar: Calendar
     }
 
 fun Date. formatAsTime(): String {
-    val hour = calendar.get(HOUR).toString().padStart(2, '0')
+    var hour = calendar.get(HOUR).toString().padStart(2, '0')
     val minute = calendar.get(MINUTE).toString().padStart(2, '0')
     val meridiem = if (calendar.get(AM_PM) == 0){"AM"}else{"PM"}
+
+    if(hour=="00" && meridiem=="PM"){
+        hour = "12"
+    }
+
     return "$hour:$minute $meridiem"
 }
 

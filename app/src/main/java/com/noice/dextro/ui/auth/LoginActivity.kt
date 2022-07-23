@@ -37,13 +37,19 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if(isReturningUser()) {
+
             if(areUserDetailsSet()){
+
                 skipLogin()
+
             }else{
+
                 goToSignUp()
+
             }
 
         }else {
+
             initDataBinding()
 
             initViewModel()
@@ -77,7 +83,7 @@ class LoginActivity : AppCompatActivity() {
         val phoneNumberHintIntentResultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
                 try {
                     val phoneNumber = Identity.getSignInClient(this).getPhoneNumberFromIntent(result.data)
-                    bind.phoneNumTiet.setText(phoneNumber.getLast10Digits())
+                    bind.phoneNumTiet.setText(getLast10Digits(phoneNumber))
                 } catch (e: Exception) {
                     Log.e(TAG, "Phone Number Hint failed")
                 }
@@ -156,11 +162,16 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun String.getLast10Digits():String{
+    fun getLast10Digits(phoneNumber:String):String{
         val stringBuilder = StringBuilder(10)
-        for ( i in length-1..0){
-            if(this[i].isDigit() && stringBuilder.length <10){
-                stringBuilder.append(this[i])
+        for ( i in phoneNumber.reversed()){
+            if(i.isDigit() ){
+                if(stringBuilder.length <10) {
+                    stringBuilder.append(i)
+                }
+                else{
+                    break
+                }
             }
         }
         return stringBuilder.reverse().toString()

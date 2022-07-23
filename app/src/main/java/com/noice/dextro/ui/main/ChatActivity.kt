@@ -19,12 +19,8 @@ import com.noice.dextro.data.model.*
 import com.noice.dextro.databinding.ActivityChatBinding
 import com.noice.dextro.ui.adapters.ChatAdapter
 import com.noice.dextro.utils.KeyboardVisibilityUtil
-import com.noice.dextro.utils.formatAsTime
 import com.noice.dextro.utils.isSameDayAs
-import com.vanniktech.emoji.EmojiAndroidProvider
-import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.EmojiPopup
-import com.vanniktech.emoji.google.GoogleEmojiProvider
 
 const val UID = "UID"
 const val NAME = "NAME"
@@ -240,7 +236,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        UpdateUnreadMsgCount()
+        updateUnreadMsgCount()
         bind.root.viewTreeObserver
             .removeOnGlobalLayoutListener(keyboardVisibilityHelper.visibilityListener)
     }
@@ -250,12 +246,17 @@ class ChatActivity : AppCompatActivity() {
         getChatNodeReference(recipientUid).removeEventListener(messagesListener)
     }
 
-    private fun UpdateUnreadMsgCount() {
+    private fun updateUnreadMsgCount() {
         if(messages.size>1){
-            getInboxNodeReference(mCurrentUid, recipientUid).child("unread_msg_count")
-                .setValue(0)
+            val inboxData = InboxItem(
+                name = recipientName,
+                thumbnail_url = recipientImgUrl,
+                uid = recipientUid,
+                recent_msg = "",
+                unread_msg_count = 0
+            )
+            getInboxNodeReference(mCurrentUid, recipientUid).setValue(inboxData)
         }
-
     }
 }
 

@@ -125,7 +125,6 @@ class VerifyOtpActivity : AppCompatActivity() {
         bind.verifyNoTitleTv.text = getString(R.string.verify_custom_number,phoneNumber)
 
         initHelperTxtSpannableString()
-        isUserprofileSet()
 
         //<editor-fold desc="Init PhoneAuthOptions var for sending a request for OTP">
         //should always be above PhoneAuthOptions variable
@@ -205,7 +204,7 @@ class VerifyOtpActivity : AppCompatActivity() {
 
                     if( !(currentUser!!.displayName.isNullOrBlank())){
                         Log.i(TAG, "onCreate: name =  ${currentUser!!.displayName} photo = ${currentUser!!.photoUrl}")
-                        startActivity(Intent(this, MainActivity::class.java))
+                        startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
                         finish()
                     }else{
                         Log.i(TAG, "onCreate: name =  ${currentUser!!.displayName} photo = ${currentUser!!.photoUrl}")
