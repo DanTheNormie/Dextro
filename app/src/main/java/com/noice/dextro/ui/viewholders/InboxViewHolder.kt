@@ -3,6 +3,7 @@ package com.noice.dextro.ui.viewholders
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.noice.dextro.R
 import com.noice.dextro.data.model.InboxItem
 import com.noice.dextro.databinding.UserItemLayoutBinding
@@ -23,6 +24,7 @@ class InboxViewHolder(private val bind:UserItemLayoutBinding):RecyclerView.ViewH
         }
         Glide.with(bind.root.context)
             .load(inboxItem.thumbnail_url)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .centerCrop()
             .placeholder(R.drawable.ic_baseline_person_24)
             .into(bind.userIv)

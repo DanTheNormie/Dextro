@@ -7,7 +7,7 @@ data class InboxItem(
     var uid: String,
     var name: String,
     var thumbnail_url: String,
-    val recent_msg_time: Date = Date(),
+    var recent_msg_time: Date = Date(),
     var unread_msg_count: Int = 0
 ) {
     constructor() : this("", "", "", "", Date(), 0)

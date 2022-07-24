@@ -6,11 +6,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.google.firebase.firestore.FirebaseFirestore
-import com.noice.dextro.data.firebase.FirestorePagingSource
+import com.noice.dextro.data.firebase.FirestoreUsersPagingSource
 
 class MainViewModel: ViewModel() {
 
     val flow = Pager(PagingConfig(20)){
-        FirestorePagingSource(FirebaseFirestore.getInstance())
+        FirestoreUsersPagingSource(FirebaseFirestore.getInstance())
     }.flow.cachedIn(viewModelScope)
 }

@@ -4,6 +4,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.noice.dextro.R
 import com.noice.dextro.data.model.UserItem
 
@@ -29,6 +30,7 @@ class UserViewHolder(val bind:UserItemLayoutBinding):RecyclerView.ViewHolder(bin
 
             Glide.with(bind.root)
                 .load(userItem.thumbnailUrl)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .centerCrop()
                 .placeholder(R.drawable.ic_baseline_person_24)
                 .into(userIv)

@@ -45,12 +45,11 @@ class SignUpActivity : AppCompatActivity() {
     lateinit var selectedImageUri: Uri
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bind = DataBindingUtil.setContentView(this,R.layout.activity_sign_up)
+        initViewBinding()
 
         imgPickerActivity = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == RESULT_OK) {
                 val data = result.data
-                // do your operation from here ....
                 if (data != null && data.data != null) {
                     selectedImageUri = data.data!!
                     var selectedImageBitmap: Bitmap? = null
@@ -62,11 +61,8 @@ class SignUpActivity : AppCompatActivity() {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    bind.userIv.apply {
-                        setImageBitmap(
-                            selectedImageBitmap
-                        )
-                    }
+                    bind.userIv.setImageBitmap(selectedImageBitmap)
+
                     uploadImage(selectedImageUri)
                 }
             }
@@ -103,6 +99,10 @@ class SignUpActivity : AppCompatActivity() {
         bind.uploadImgBtn.setOnClickListener {
             uploadImage(selectedImageUri)
         }
+    }
+
+    private fun initViewBinding() {
+        bind = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
     }
 
     private fun userDetailsAreSet(): Boolean {

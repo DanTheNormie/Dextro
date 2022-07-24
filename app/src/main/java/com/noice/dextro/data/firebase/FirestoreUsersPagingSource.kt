@@ -8,7 +8,7 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.noice.dextro.data.model.UserItem
 import kotlinx.coroutines.tasks.await
 
-class FirestorePagingSource(
+class FirestoreUsersPagingSource(
     private val db:FirebaseFirestore
 ) : PagingSource<QuerySnapshot,UserItem>(){
     override fun getRefreshKey(state: PagingState<QuerySnapshot, UserItem>): QuerySnapshot? {

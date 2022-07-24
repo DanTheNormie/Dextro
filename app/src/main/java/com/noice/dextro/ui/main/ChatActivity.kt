@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.gms.measurement.sdk.api.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -140,7 +142,11 @@ class ChatActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         bind.recipientNameTv.text = recipientName
-        Glide.with(this).load(recipientImgUrl).into(bind.recipientImgIv)
+        Glide.with(this)
+            .load(recipientImgUrl)
+            .placeholder(com.noice.dextro.R.drawable.ic_baseline_person_24)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(bind.recipientImgIv)
         bind.materialToolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
@@ -248,11 +254,13 @@ class ChatActivity : AppCompatActivity() {
 
     private fun updateUnreadMsgCount() {
         if(messages.size>1){
+            val msg = (messages.lastOrNull() as Message)
             val inboxData = InboxItem(
                 name = recipientName,
                 thumbnail_url = recipientImgUrl,
                 uid = recipientUid,
-                recent_msg = "",
+                recent_msg = msg.msg,
+                recent_msg_time = msg.sentAt,
                 unread_msg_count = 0
             )
             getInboxNodeReference(mCurrentUid, recipientUid).setValue(inboxData)
