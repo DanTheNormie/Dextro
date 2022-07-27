@@ -11,7 +11,7 @@ import com.vanniktech.emoji.google.GoogleEmojiProvider
 class MainApplication:Application() {
     override fun onCreate() {
         super.onCreate()
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        FirebaseDatabase.getInstance("https://dextro-11-default-rtdb.asia-southeast1.firebasedatabase.app").setPersistenceEnabled(true)
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(

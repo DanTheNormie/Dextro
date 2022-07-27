@@ -43,7 +43,7 @@ class ChatActivity : AppCompatActivity() {
         intent.getStringExtra(IMG)!!
     }
     private val db by lazy {
-        FirebaseDatabase.getInstance()
+        FirebaseDatabase.getInstance("https://dextro-11-default-rtdb.asia-southeast1.firebasedatabase.app")
     }
 
     private lateinit var currentUser: UserItem

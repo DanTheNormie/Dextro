@@ -5,8 +5,9 @@
 buildscript {
     repositories {
         // Check that you have the following line (if not, add it):
-        google()  // Google's Maven repository
 
+        google()  // Google's Maven repository
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
 
@@ -21,6 +22,8 @@ plugins {
     id 'com.android.library' version '7.1.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.6.10' apply false
 }
+
+
 
 task clean(type: Delete) {
     delete rootProject.buildDir

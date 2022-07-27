@@ -2,107 +2,180 @@ package com.noice.dextro.ui.auth
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.tasks.Continuation
-
+import androidx.lifecycle.ViewModelProvider
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
+import com.google.firebase.appcheck.internal.util.Logger.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import com.noice.dextro.R
 import com.noice.dextro.data.model.UserItem
 import com.noice.dextro.databinding.ActivitySignUpBinding
 import com.noice.dextro.ui.main.MainActivity
-import java.io.IOException
+import com.noice.dextro.utils.NetworkCallStatus.Status.*
 
 
 class SignUpActivity : AppCompatActivity() {
     lateinit var bind: ActivitySignUpBinding
-    lateinit var imgPickerActivity: ActivityResultLauncher<Intent>
-    val storage by lazy {
-        FirebaseStorage.getInstance()
-    }
+    lateinit var vm:SignUpViewModel
+    lateinit var  downloadUrl:String
+    lateinit var selectedImageUri: Uri
     val auth by lazy {
         FirebaseAuth.getInstance()
     }
-    val firestoreDb by lazy {
-        FirebaseFirestore.getInstance()
-    }
-    lateinit var  downloadUrl:String
-    val tag = "SignUpActivity"
-    lateinit var selectedImageUri: Uri
+    lateinit var imagePickerActivityResultLauncher: ActivityResultLauncher<CropImageContractOptions>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initViewBinding()
 
-        imgPickerActivity = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data
-                if (data != null && data.data != null) {
-                    selectedImageUri = data.data!!
-                    var selectedImageBitmap: Bitmap? = null
-                    try {
-                        selectedImageBitmap = MediaStore.Images.Media.getBitmap(
-                            this.contentResolver,
-                            selectedImageUri
-                        )
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                    bind.userIv.setImageBitmap(selectedImageBitmap)
+        initViewModelAndViewBinding()
 
-                    uploadImage(selectedImageUri)
+        initViewModelObservers()
+
+        registerActivityResultCallbacks()
+
+        initOnClickListeners()
+    }
+
+    private fun initViewModelAndViewBinding() {
+        bind = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
+        vm = ViewModelProvider(this)[SignUpViewModel::class.java]
+    }
+
+    private fun initViewModelObservers() {
+        vm.uploadImageStatus.observe(this){
+            when(it.status){
+                LOADING ->{
+                    showNextButton(false)
+                    loadingProgress(true,"please wait while we upload your profile picture")
                 }
+                SUCCESS->{
+                    showNextButton(true)
+                    downloadUrl = it.data.toString()
+                    bind.uploadImgBtn.visibility = View.GONE
+                    loadingProgress(false,"Image has been uploaded successfully")
+                }
+                ERROR->{
+                    showNextButton(false)
+                    bind.uploadImgBtn.visibility = View.VISIBLE
+                    loadingProgress(false,"Failed to upload image, please try again !!!")
+                }
+                else -> {}
             }
         }
 
-        bind.userIv.setOnClickListener {
-            checkPermsAndPickImgFromGallery()
-        }
-        bind.nextBtn.setOnClickListener {
-            if(userDetailsAreSet()) {
-                val user = UserItem(
-                    auth.uid.toString(),
-                    bind.usernameTiet.text.toString(),
-                    downloadUrl,
-                    downloadUrl
-                )
-                firestoreDb.collection("users").document(auth.uid!!).set(user).addOnSuccessListener {
-                    val profile = UserProfileChangeRequest.Builder().apply {
-                        displayName = bind.usernameTiet.text.toString()
-                    }.build()
-                    FirebaseAuth.getInstance().currentUser?.updateProfile(profile)
+        vm.uploadUserDetailsStatus.observe(this){
+            when(it.status){
+                LOADING->{
+                    loadingProgress(true,"")
+                }
+                SUCCESS->{
+                    loadingProgress(false,"")
                     startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
                     finish()
-                    loadingProgress(false)
-                }.addOnFailureListener {
-                    loadingProgress(false)
-                    Toast.makeText(this, it.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
+                ERROR->{
+                    loadingProgress(false,(it.data as Exception).localizedMessage!!)
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun registerActivityResultCallbacks() {
+        registerImagePickerActivityResultLauncher()
+    }
+
+    private fun registerImagePickerActivityResultLauncher() {
+        imagePickerActivityResultLauncher =  registerForActivityResult(CropImageContract()) { result ->
+            if (result.isSuccessful) {
+                // use the returned uri
+                val uriContent = result.uriContent
+                if (uriContent != null) {
+                    bind.userIv.setImageURI(result.uriContent)
+                    vm.uploadImage(uriContent)
+                }
+
+            } else {
+                // an error occurred
+                val exception = result.error
+                Log.i(TAG, "onCreate: ${exception?.localizedMessage}")
+            }
+        }
+    }
+
+    private fun initOnClickListeners() {
+        bind.userIv.setOnClickListener {
+            checkPermsAndPickImgFromPhone()
+        }
+
+        bind.nextBtn.setOnClickListener {
+            if(userDetailsAreSet()) {
+                uploadUserDetails()
             }else{
                 bind.helperTxtTv.setTextColor(Color.RED)
             }
         }
 
         bind.uploadImgBtn.setOnClickListener {
-            uploadImage(selectedImageUri)
+            vm.uploadImage(selectedImageUri)
         }
+
     }
 
-    private fun initViewBinding() {
-        bind = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
+    private fun uploadUserDetails() {
+        val user = UserItem(
+            auth.uid.toString(),
+            bind.usernameTiet.text.toString(),
+            downloadUrl,
+            downloadUrl
+        )
+        val profile = UserProfileChangeRequest.Builder().apply {
+            displayName = bind.usernameTiet.text.toString()
+        }.build()
+        vm.uploadUserDetails(user, profile)
+    }
+
+    private fun getImageFromPhone() {
+        // start picker to get image for cropping and then use the image in cropping activity
+        imagePickerActivityResultLauncher.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setActivityTitle("Adjust image")
+                setAspectRatio(1,1)
+                setAllowRotation(true)
+                setCropShape(CropImageView.CropShape.OVAL)
+                setCropMenuCropButtonTitle("crop")
+                setMultiTouchEnabled(true)
+            }
+        )
+    }
+
+    private fun checkPermsAndPickImgFromPhone() {
+        if( (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+            &&
+            (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+        ){
+            val read_perms = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            val write_perms = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            requestPermissions(read_perms,6969)
+            requestPermissions(write_perms,9696)
+
+        }else{
+            getImageFromPhone()
+        }
     }
 
     private fun userDetailsAreSet(): Boolean {
@@ -123,68 +196,19 @@ class SignUpActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         return isUserDetailsSet
     }
-
-    private fun checkPermsAndPickImgFromGallery() {
-        if( (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
-            &&
-            (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
-        ){
-            val read_perms = arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            val write_perms = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-            requestPermissions(read_perms,6969)
-            requestPermissions(write_perms,9696)
-
-        }else{
-            pickImageFromGallery()
-        }
+    private fun showNextButton(show: Boolean) {
+        bind.nextBtn.isEnabled = show
     }
-
-    private fun pickImageFromGallery() {
-        val intent = Intent().apply {
-            action = Intent.ACTION_PICK
-            type = "image/*"
-        }
-        imgPickerActivity.launch(intent)
-    }
-
-    private fun uploadImage(it:Uri){
-        val ref = storage.reference.child("uploads/" + auth.uid.toString())
-        val uploadTask = ref.putFile(it)
-        loadingProgress(true)
-        Toast.makeText(this, " please wait while we upload your profile picture", Toast.LENGTH_LONG).show()
-        uploadTask.continueWithTask(Continuation { task ->
-            if(!task.isSuccessful){
-                task.exception?.let {
-                    Log.i(tag,"${it.message}")
-                    throw it
-                }
-            }
-            return@Continuation ref.downloadUrl
-        }).addOnCompleteListener { task ->
-            if(task.isSuccessful){
-                Toast.makeText(this, "Image has been uploaded successfully", Toast.LENGTH_SHORT).show()
-                downloadUrl = task.result.toString()
-
-                bind.uploadImgBtn.visibility = View.GONE
-            }else{
-                Toast.makeText(this, "Failed to upload image, please try again !!!", Toast.LENGTH_SHORT).show()
-                bind.uploadImgBtn.visibility = View.VISIBLE
-                loadingProgress(false)
-            }
-            loadingProgress(false)
-        }.addOnFailureListener {
-            loadingProgress(false)
-            bind.uploadImgBtn.visibility = View.VISIBLE
-            Log.i("firebase", "uploadImage: ${it.localizedMessage}")
-        }
-    }
-
-    private fun loadingProgress(show:Boolean) {
+    private fun loadingProgress(show:Boolean,reason:String) {
         if(show){
             bind.progressBar.visibility = View.VISIBLE
+
         }else{
             bind.progressBar.visibility = View.GONE
+
+        }
+        if(reason.isNotBlank()){
+            Toast.makeText(this, reason, Toast.LENGTH_SHORT).show()
         }
 
     }
